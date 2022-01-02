@@ -530,7 +530,41 @@ bool hasPathSum(TreeNode *root, int sum) {
 
 
 
+### L98. 验证二叉搜索树
 
+**题目**：给你一个二叉树的根节点 root ，判断其是否是一个有效的二叉搜索树。  
+有效二叉搜索树定义如下：  
+节点的左子树只包含 小于 当前节点的数。  
+节点的右子树只包含 大于 当前节点的数。  
+所有左子树和右子树自身必须也是二叉搜索树。  
+	
+**思路1**：根据二叉搜索树的定义可知，其中序遍历是一个升序，因此可以通过比较当前节点和上一节点的值来判断是否时二叉搜索树。
+```C++
+bool isValidBST(TreeNode* root) {
+    //采用中序遍历
+    stack<TreeNode*> stk;
+    auto p = root;
+    TreeNode* prev=nullptr;
+    while(p || !stk.empty()){
+        while(p){
+            stk.push(p);
+            p=p->left;
+        }
+        if(!stk.empty()){
+            p = stk.top();
+            stk.pop();
+            if(prev && prev->val >= p->val ){
+                return false;
+            }
+            prev = p;
+            p = p->right;
+        }
+    }
+    return true;
+}
+```
+	
+**思路2**：用递归法，对于每次递归传入当前节点的范围，若不满足范围则不是二叉搜索树。
 
 
 
