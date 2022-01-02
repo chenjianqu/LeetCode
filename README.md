@@ -487,11 +487,46 @@ bool hasPathSum(TreeNode *root, int sum) {
 
 
 
+### L701. 二叉搜索树中的插入操作
+
+**题目**：给定二叉搜索树（BST）的根节点和要插入树中的值，将值插入二叉搜索树。 返回插入后二叉搜索树的根节点。 输入数据 保证 ，新值和原始二叉搜索树中的任意节点值都不同。  
+注意，可能存在多种有效的插入方式，只要树在插入后仍保持为二叉搜索树即可。 你可以返回 任意有效的结果 。  
+
+**思路1**：递归  
 
 
 
+**思路2**: 迭代  
+将val与每个节点的val进行比较，若val<node->val，则进入左节点，否则进入右节点。  当节点为空时，插入新的节点。
+```C++
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        //迭代法
+        TreeNode* node = new TreeNode(val);
+        if(!root){
+            root = node;
+            return root;
+        }
 
-
+        auto p = root;
+        while(p){
+            if(val < p->val){
+                if(!p->left){
+                    p->left = node;
+                    break;
+                }
+                p = p->left;
+            }
+            if(val > p->val){
+                if(!p->right){
+                    p->right = node;
+                    break;
+                }
+                p = p->right;
+            }
+        }
+        return root;
+    }
+```
 
 
 
