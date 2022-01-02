@@ -33,11 +33,40 @@ original 中下标从 0 到 n - 1 （都 包含 ）的元素构成二维数组�
 ```
 
 
+### L136. 只出现一次的数字
 
+**题目**:题目：给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。  
+说明：你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
 
+**思路1**：使用哈希表对数组元素进行计数，最后遍历哈希表，找到计数为1的数。
+```C++
+int singleNumber(vector<int>& nums) {
+    std::unordered_map<int,int> d;
+    for(int i=0;i<nums.size();++i){
+        if(d.find(nums[i])==d.end())
+            d.insert({nums[i],1});
+        else
+            d[nums[i]]++;
+    }
+    for(auto [num,count] : d) if(count==1) return num;
+    return 0;
+}
+```
 
-
-
+**思路2**：使用异或运算。
+  如何才能做到线性时间复杂度和常数空间复杂度呢？答案是使用位运算。对于这道题，可使用异或运算 ⊕。异或运算有以下三个性质。  
+任何数和 0 做异或运算，结果仍然是原来的数，即 a⊕0=a。   
+任何数和其自身做异或运算，结果是 0，即 a⊕a=0。   
+异或运算满足交换律和结合律，即 a⊕b⊕a = b⊕a⊕a = b⊕(a⊕a) = b⊕0=b。  
+ 因此，数组中的全部元素的异或运算结果即为数组中只出现一次的数字。  
+```C++
+int singleNumber1(vector<int>& nums) {
+        int result =0;
+        for(int i=0;i<nums.size();++i)
+            result ^= nums[i];
+        return result;
+}
+```
 
 
 ## 链表
