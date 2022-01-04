@@ -121,6 +121,120 @@ return candidate;
 ```
 
 
+
+### L1. 两数之和
+**题目**：给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出 和为目标值 target 的那 两个 整数，
+并返回它们的数组下标。 你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。
+你可以按任意顺序返回答案。  
+
+**思路1**：遍历。  
+```C++
+vector<int> twoSum(vector<int>& nums, int target) {
+    for(int i=0;i<nums.size();++i)
+        for(int j=i+1;j<nums.size();++j)
+            if(nums[i]+nums[j]==target)
+                return vector<int>{i,j};
+    return vector<int>{0,1};
+}
+```
+**思路2**:哈希表。记录遍历过的值到哈希表。
+```C++
+vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int,int> d;
+    for(int i=0;i<nums.size();++i){
+        if(d.find(target-nums[i])!=d.end())
+            return vector<int>{i,d[target-nums[i]]};
+        if(d.find(nums[i])==d.end())
+            d.insert({nums[i],i});
+    }
+    return vector<int>{0,1};
+}
+```
+
+### L15. 三数之和
+**题目**：给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？
+请你找出所有和为 0 且不重复的三元组。  
+注意：答案中不可以包含重复的三元组。  
+
+**思路1**:遍历法，双重循环，外层单指针，内双指针。时间复杂度O(n^2)  
+```C++
+int Partition(vector<int> &arr,int low,int high){
+    int key=arr[low];
+    while(low<high){
+        while(low<high && arr[high]>=key)
+            high--;
+        arr[low]=arr[high];
+        while(low<high && arr[low]<=key)
+            low++;
+        arr[high]=arr[low];
+    }
+    arr[low]=key;
+    return low;
+}
+void QSort(vector<int> &arr,int low,int high){
+    if(low < high){
+        int parting = Partition(arr,low,high);
+        QSort(arr,low,parting-1);
+        QSort(arr,parting+1,high);
+    }
+}
+
+vector<vector<int>> threeSum(vector<int>& nums) {
+    const int n = nums.size();
+    vector<vector<int>> output;
+    //先排序
+    QSort(nums,0,nums.size()-1);
+    //外层单指针，内层双指针
+    for (int first = 0; first < n; ++first) {
+        if (first > 0 && nums[first] == nums[first - 1])  // 需要和上一次枚举的数不相同
+            continue;
+        int third = n - 1;// c 对应的指针初始指向数组的最右端
+        int target = -nums[first];
+        for (int second = first + 1; second < n; ++second) {
+            if (second > first + 1 && nums[second] == nums[second - 1]) // 需要和上一次枚举的数不相同
+                continue;
+            while (second < third && nums[second] + nums[third] > target)  // 需要保证 b 的指针在 c 的指针的左侧
+                --third;
+            if (second == third)
+                break;
+            if (nums[second] + nums[third] == target)
+                output.push_back({nums[first], nums[second], nums[third]});
+        }
+    }
+    return output;
+}
+```
+
+
+### L16. 最接近的三数之和
+**题目**：给你一个长度为 n 的整数数组 nums 和 一个目标值 target。请你从 nums 中选出三个整数，
+使它们的和与 target 最接近。 返回这三个数的和。  
+假定每组输入只存在恰好一个解。
+
+**思路1**:
+```C++
+
+
+```
+
+
+### L18. 四数之和
+**题目**：
+给你一个由 n 个整数组成的数组 nums ，和一个目标值 target 。请你找出并返回满足下述全部条件且不重复的四元组 [nums[a], nums[b], nums[c], nums[d]] 
+（若两个四元组元素一一对应，则认为两个四元组重复）：  
+* 0 <= a, b, c, d < n
+* a、b、c 和 d 互不相同
+* nums[a] + nums[b] + nums[c] + nums[d] == target
+你可以按 任意顺序 返回答案 。
+
+**思路1**:
+```C++
+
+
+```
+
+
+
 ## 链表
 ### L141. 环形链表
 **题目**：给你一个链表的头节点 head ，判断链表中是否有环。  
