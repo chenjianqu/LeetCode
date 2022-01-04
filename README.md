@@ -211,10 +211,30 @@ vector<vector<int>> threeSum(vector<int>& nums) {
 使它们的和与 target 最接近。 返回这三个数的和。  
 假定每组输入只存在恰好一个解。
 
-**思路1**:
+**思路1**: 直接暴力解法的时间复杂度时O(n^3)。同上一题一样，内层循环可以用双指针降低复杂度。  
+为了使用双指针，需要首先对数组进行排序，复杂度为O(nlogn)。与上一题不同的是，不需要考虑重复的3元组。
 ```C++
-
-
+int threeSumClosest(vector<int>& nums, int target) {
+    std::sort(nums.begin(),nums.end());
+    int closest_sum=0;
+    int delta = INT_MAX;
+    for(int i=0;i<nums.size();++i){
+        int j=i+1,k=nums.size()-1;
+        while(j<k){
+            int sum = nums[i]+nums[j]+nums[k];
+            if(std::abs(target-sum)<delta){
+                delta = std::abs(target-sum);
+                closest_sum = sum;
+                if(delta==0)break;
+            }
+            if(sum<=target)
+                j++;
+            else if(sum>target)
+                k--;
+        }
+    }
+    return closest_sum;
+}
 ```
 
 
@@ -227,9 +247,39 @@ vector<vector<int>> threeSum(vector<int>& nums) {
 * nums[a] + nums[b] + nums[c] + nums[d] == target
 你可以按 任意顺序 返回答案 。
 
-**思路1**:
-```C++
+**思路1**: 与L16差不多，外层是两个暴力双循环，内层是一个双指针。为了去掉重复的4元组，这里通过
+集合set来保存结果。注意，本题还要考虑数据范围的问题。
 
+```C++
+vector<vector<int>> fourSum(vector<int>& nums, int target) {
+    vector<vector<int>> arr;
+    if(nums.size()<4)
+        return arr;
+    std::set<vector<int>> num_set;
+    //排序
+    std::sort(nums.begin(),nums.end());
+    //内外层双指针
+    int n = nums.size();
+    for(int i=0;i<n;++i){
+        for(int j=i+1;j<n;++j){
+            int k=j+1,l= n-1;
+            while(k<l){
+                int64_t sum = static_cast<int64_t>(nums[i])+static_cast<int64_t>(nums[j])+
+                        static_cast<int64_t>(nums[k])+static_cast<int64_t>(nums[l]);
+                if(sum==target){
+                    num_set.insert({nums[i],nums[j],nums[k],nums[l]});
+                    k++;
+                }
+                else if(sum>target) l--;
+                else k++;
+            }
+        }
+    }
+
+    for(auto &v : num_set)
+        arr.push_back(v);
+    return arr;
+}
 
 ```
 

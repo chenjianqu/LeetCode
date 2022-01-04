@@ -7,26 +7,27 @@ using namespace std;
 
 
 int threeSumClosest(vector<int>& nums, int target) {
-    //排序
     std::sort(nums.begin(),nums.end());
-    int n = nums.size();
-    int delta=INT_MAX;
-    int min_sum;
-    for(int i=0;i<n;++i){
-        //if(i>0 && nums[i]==nums[i-1])continue;
-        int k=n-1;
-        for(int j=i+1;j<k;j++){
-            while(j<k){
-                int sum=nums[i]+nums[j]+nums[k];
-                if(std::abs(sum-target)<delta){
-                    delta = std::abs(sum-target);
-                    min_sum = sum;
-                }
-                --k;
+    int closest_sum=0;
+    int delta = INT_MAX;
+    for(int i=0;i<nums.size();++i){
+        int j=i+1,k=nums.size()-1;
+        while(j<k){
+            int sum = nums[i]+nums[j]+nums[k];
+            if(std::abs(target-sum)<delta){
+                delta = std::abs(target-sum);
+                closest_sum = sum;
+                if(delta==0)break;
+            }
+            if(sum<=target){
+                j++;
+            }
+            else if(sum>target){
+                k--;
             }
         }
     }
-    return min_sum;
+    return closest_sum;
 }
 
 int main() {
