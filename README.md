@@ -3,9 +3,8 @@
 
 
 
-
-
 ## 数组
+
 ### L2022. 将一维数组转变成二维数组
 
 **题目**:
@@ -119,6 +118,69 @@ for (int num : nums) {
 return candidate;
 }
 ```
+
+
+
+
+
+### L349. 两个数组的交集
+
+**题目**: 给定两个数组，编写一个函数来计算它们的交集。 
+
+说明：
+
+- 输出结果中的每个元素一定是唯一的。
+- 我们可以不考虑输出结果的顺序。
+
+**思路1**：使用两个哈希集合，第一个哈希集合存放第一个数组的元素，第二个哈希集合存放 交集元素。最后再把第二个哈希集合转移到输出数组中。
+
+```C++
+vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+    std::unordered_set<int> hash_set,out_set;
+    std::vector<int> arr;
+    for(int i=0;i<nums1.size();++i)
+        hash_set.insert(nums1[i]);
+    for(int i=0;i<nums2.size();++i)
+        if(hash_set.count(nums2[i])>0)
+            out_set.insert(nums2[i]);
+    for(auto e:out_set) arr.push_back(e);
+    return arr;
+}
+```
+
+**思路2**： 排序+双指针。首先对两个数组进行排序，然后分别对两个数组设置一个指针，用于指向正在比较的数组的元素。对于每个指针，还需要判断去掉重复的元素。
+
+```C++
+vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+    std::sort(nums1.begin(),nums1.end());
+    std::sort(nums2.begin(),nums2.end());
+    vector<int> arr;
+    for(int i=0,j=0;i<nums1.size()&&j<nums2.size();){
+        if(i>0 && nums1[i]==nums1[i-1]){
+            ++i;
+            continue;
+        }
+        if(j>0 && nums2[j]==nums2[j-1]){
+            ++j;
+            continue;
+        }
+        if(nums1[i]==nums2[j]){
+            arr.push_back(nums1[i]);
+            ++i;
+            ++j;
+        }
+        else if(nums1[i]<nums2[j]){
+            ++i;
+        }
+        else{
+            ++j;
+        }
+    }
+    return arr;
+}
+```
+
+
 
 
 
@@ -238,7 +300,11 @@ int threeSumClosest(vector<int>& nums, int target) {
 ```
 
 
+
+
+
 ### L18. 四数之和
+
 **题目**：
 给你一个由 n 个整数组成的数组 nums ，和一个目标值 target 。请你找出并返回满足下述全部条件且不重复的四元组 [nums[a], nums[b], nums[c], nums[d]] 
 （若两个四元组元素一一对应，则认为两个四元组重复）：  
@@ -284,7 +350,100 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
 ```
 
 
+
+
+
+### L724. 寻找数组的中心下标
+
+**题目**：给你一个整数数组 nums ，请计算数组的 中心下标 。
+
+数组 中心下标 是数组的一个下标，其左侧所有元素相加的和等于右侧所有元素相加的和。
+
+如果中心下标位于数组最左端，那么左侧数之和视为 0 ，因为在下标的左侧不存在元素。这一点对于中心下标位于数组最右端同样适用。
+
+如果数组有多个中心下标，应该返回 最靠近左边 的那一个。如果数组不存在中心下标，返回 -1 。
+
+**思路1**：暴力解法。从左到右遍历每一个可能的中心下标，计算左右两边的和，并判断两边是否相等。
+
+```C++
+int pivotIndex(vector<int>& nums) {
+    int left_sum=0;
+    int right_sum=0;
+    for(int j=1;j<nums.size();++j) right_sum+=nums[j];//算法中心下标在0处的情况
+    if(right_sum==0) return 0;
+
+    for(int i=0;i<nums.size()-1;++i){
+        left_sum+=nums[i];
+        right_sum=0;
+        for(int j=i+2;j<nums.size();++j) right_sum+=nums[j];
+        if(left_sum==right_sum)
+            return i+1;
+    }
+    return -1;
+}
+```
+
+**思路2**：单层循环。只需要遍历一边中心下标即可，每次迭代时，更新左边的和，右边的和。
+
+```C++
+int pivotIndex(vector<int>& nums) {
+    int left_sum=0;
+    int right_sum=std::accumulate(nums.begin()+1,nums.end(),0);
+    for(int i=0;i<nums.size();++i){
+        if(left_sum == right_sum) return i;
+        if(i==nums.size()-1) break;
+        left_sum+=nums[i];
+        right_sum -=nums[i+1];
+    }
+    return -1;
+}
+```
+
+
+
+
+
+
+
+### L56. 合并区间
+
+**题目**：以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。
+
+**思路1**：暴力法，双重循环比较两个之间是否重叠。该方法会“超出时间限制”。
+
+**思路2**：（这道题第9次提交才对）首先对输入的区间数组进行排序，则重叠的区间肯定相邻。遍历一遍，对相邻重叠区间进行合并。当第i个区间与i+1个区间不相邻时，将第i个区间添加到输出数组。
+
+```C++
+vector<vector<int>> merge(vector<vector<int>>& intervals) {
+    int n=intervals.size();
+    if(n==1)
+        return vector<vector<int>>{intervals[0]};
+    std::sort(intervals.begin(),intervals.end());
+    vector<vector<int>> output;
+    for(int i=0;i<intervals.size()-1;++i){
+        if(intervals[i][1]>=intervals[i+1][0]){//i和i+1重叠
+            intervals[i+1][0] = intervals[i][0];
+            intervals[i+1][1] = std::max(intervals[i][1],intervals[i+1][1]);
+        }else{
+            output.push_back(intervals[i]);
+        }
+    }
+    if(intervals[n-2][1]>=intervals[n-1][0]){//n-1和n-2重叠
+        intervals[n-1][0] = intervals[n-2][0];
+        intervals[n-1][1] = std::max(intervals[n-2][1],intervals[n-1][1]);
+    }
+    output.push_back(intervals[n-1]);
+    return output;
+}
+```
+
+
+
+
+
+
 ## 哈希表
+
 ### L705. 设计哈希集合
 **题目**：不使用任何内建的哈希表库设计一个哈希集合（HashSet）。  
 实现 MyHashSet 类：
@@ -331,8 +490,55 @@ private:
 };
 ```
 
+**思路2**：使用一个**数组**来表示哈希集。数组中的每个元素都是一个桶。在每个桶中，我们使用 vector来存储所有值。
+
+```C++
+#define MAX_LEN 100000          // the amount of buckets
+class MyHashSet {
+private:
+    vector<int> set[MAX_LEN];   // hash set implemented by array
+    /** Returns the corresponding bucket index. */
+    int getIndex(int key) {
+        return key % MAX_LEN;
+    }
+    /** Search the key in a specific bucket. Returns -1 if the key does not existed. */
+    int getPos(int key, int index) {
+        // Each bucket contains a list. Iterate all the elements in the bucket to find the target key.
+        for (int i = 0; i < set[index].size(); ++i) 
+            if (set[index][i] == key) 
+                return i;
+        return -1;
+    }
+public:
+    MyHashSet() {
+    }
+    
+    void add(int key) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        if (pos < 0) set[index].push_back(key);
+    }
+    
+    void remove(int key) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        if (pos >= 0) set[index].erase(set[index].begin() + pos);
+    }
+    /** Returns true if this set did not already contain the specified element */
+    bool contains(int key) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        return pos >= 0;
+    }
+};
+```
+
+
+
+
 
 ### L706. 设计哈希映射
+
 **题目**：不使用任何内建的哈希表库设计一个哈希映射（HashMap）。  
 实现 MyHashMap 类：  
 MyHashMap() 用空映射初始化对象  
@@ -387,7 +593,186 @@ private:
 };
 ```
 
+**思路2**：使用一个**数组**来表示哈希集。数组中的每个元素都是一个桶。在每个桶中，我们使用 vector来存储所有值。
 
+```C++
+#define MAX_LEN 100000            // the amount of buckets
+
+class MyHashMap {
+private:
+    vector<pair<int, int>> map[MAX_LEN];       // hash map implemented by array
+    /** Returns the corresponding bucket index. */
+    int getIndex(int key) {
+        return key % MAX_LEN;
+    }
+    /** Search the key in a specific bucket. Returns -1 if the key does not existed. */
+    int getPos(int key, int index) {
+        for (int i = 0; i < map[index].size(); ++i) 
+            if (map[index][i].first == key) 
+                return i;
+        return -1;
+    }
+public:
+    /** Initialize your data structure here. */
+    MyHashMap() {
+    }
+    /** value will always be positive. */
+    void put(int key, int value) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        if (pos < 0) {
+            map[index].push_back(make_pair(key, value));
+        } else {
+            map[index][pos].second = value;
+        }
+    }
+    /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+    int get(int key) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        if (pos < 0) 
+            return -1;
+         else 
+            return map[index][pos].second;
+    }
+    /** Removes the mapping of the specified value key if this map contains a mapping for the key */
+    void remove(int key) {
+        int index = getIndex(key);
+        int pos = getPos(key, index);
+        if (pos >= 0) 
+            map[index].erase(map[index].begin() + pos);
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+### L202. 快乐数
+
+**题目**：难度简单769收藏分享切换为英文接收动态反馈
+
+编写一个算法来判断一个数 `n` 是不是快乐数。
+
+「快乐数」定义为：
+
+- 对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和。
+- 然后重复这个过程直到这个数变为 1，也可能是 **无限循环** 但始终变不到 1。
+- 如果 **可以变为** 1，那么这个数就是快乐数。
+
+如果 `n` 是快乐数就返回 `true` ；不是，则返回 `false` 。
+
+```
+输入：n = 19
+输出：true
+解释：
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+```
+
+**思路1**：通过哈希集合std::unordered_set记录每次迭代中中平方和num，若发现哈希集合中已经存在了该值，则返回false。
+
+```C++
+bool isHappy(int n) {
+    if(n==1)
+        return true;
+    else if(n==0)
+        return false;
+    int num=0;
+    std::unordered_set<int> hash_set;
+    while(true){
+        while(n>0){//split
+            num += std::pow(n%10,2);
+            n/=10;
+        }
+        if(num==1)
+            return true;
+        if(hash_set.count(num)>0)
+            return false;
+        hash_set.insert(num);
+        n=num;
+        num=0;
+    }
+    return false;
+}
+```
+
+**思路2**：使用快慢指针法。通过反复调用 getNext(n) 得到的链是一个隐式的链表。隐式意味着我们没有实际的链表节点和指针，但数据仍然形成链表结构。起始数字是链表的头 “节点”，链中的所有其他数字都是节点。next 指针是通过调用 getNext(n) 函数获得。
+
+意识到我们实际有个链表，那么这个问题就可以转换为检测一个链表是否有环。因此我们在这里可以使用弗洛伊德循环查找算法。这个算法是两个奔跑选手，一个跑的快，一个跑得慢。在龟兔赛跑的寓言中，跑的慢的称为 “乌龟”，跑得快的称为 “兔子”。
+
+不管乌龟和兔子在循环中从哪里开始，它们最终都会相遇。这是因为兔子每走一步就向乌龟靠近一个节点（在它们的移动方向上）。
+
+我们不是只跟踪链表中的一个值，而是跟踪两个值，称为快跑者和慢跑者。在算法的每一步中，慢速在链表中前进 1 个节点，快跑者前进 2 个节点（对 getNext(n) 函数的嵌套调用）。
+
+如果 n 是一个快乐数，即没有循环，那么快跑者最终会比慢跑者先到达数字 1。
+
+如果 n 不是一个快乐的数字，那么最终快跑者和慢跑者将在同一个数字上相遇。
+
+
+
+
+
+## 字符串
+
+### L205. 同构字符串
+
+**题目**：给定两个字符串 s 和 t，判断它们是否是同构的。
+
+如果 s 中的字符可以按某种映射关系替换得到 t ，那么这两个字符串是同构的。
+
+每个出现的字符都应当映射到另一个字符，同时不改变字符的顺序。不同字符不能映射到同一个字符上，相同字符只能映射到同一个字符上，字符可以映射到自己本身。
+
+```
+输入：s = "egg", t = "add"
+输出：true
+
+输入：s = "foo", t = "bar"
+输出：false
+
+输入：s = "paper", t = "title"
+输出：true
+```
+
+**思路1**：用哈希表。由于要求“不同字符不能映射到同一个字符上”，因此需要两个哈希表，一个用来将s映射到t，另一个用来将t映射到s。
+
+```C++
+bool isIsomorphic(string s, string t) {
+    if(s.size()!=t.size())
+        return false;
+    std::unordered_map<char,char> hash_map;
+    std::unordered_map<char,char> value_map;
+    for(int i=0;i<s.size();++i){
+        bool find_s = hash_map.find(s[i])!=hash_map.end();
+        if(!find_s){
+            if(value_map.find(t[i])!=value_map.end())//题目要求不同字符不能映射到同一个字符
+                return false;
+            hash_map.insert({s[i],t[i]});
+            value_map.insert({t[i],s[i]});
+        }
+        else if(hash_map[s[i]]!=t[i])
+                return false;
+    }
+    return true;
+}
+```
+
+
+
+
+
+
+
+
+
+<div id = "链表"><div>
 
 
 ## 链表
@@ -499,6 +884,8 @@ ListNode* deleteDuplicates(ListNode* head) {
 
 
 
+
+<div id = "树"><div>
 
 
 ## 树
@@ -913,11 +1300,11 @@ bool isValidBST(TreeNode* root) {
     return true;
 }
 ```
-	
+
 **思路2**：用递归法，对于每次递归传入当前节点的范围，若不满足范围则不是二叉搜索树。
 
 
-	
+​	
 ### L653. 两数之和 IV - 输入 BST
 
 **题目**： 给定一个二叉搜索树 root 和一个目标结果 k，如果 BST 中存在两个元素且它们的和等于给定的目标结果，则返回 true。  
@@ -958,7 +1345,7 @@ bool findTarget(TreeNode* root, int k) {
     return false;
 }
 ```
-	
+
 **思路2**:遍历二叉树，将最简单的方法就是遍历整棵树，找出所有可能的组合，判断是否存在和为 k 的一对节点。现在在此基础上做一些改进。
 如果存在两个元素之和为 k，即 x+y=k，并且已知 x 是树上一个节点的值，则只需判断树上是否存在一个值为 y 的节点，使得 y=k-x。  
  基于这种思想，在树的每个节点上遍历它的两棵子树（左子树和右子树），寻找另外一个匹配的数。在遍历过程中，将每个节点的值都放到一个 set 中。
@@ -993,10 +1380,56 @@ TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
     return node;
 }
 ```
-	
-	
-	
-	
-	
-	
+
+
+​	
+
+
+
+
+
+## 二分查找
+
+### L35. 搜索插入位置
+
+**题目**：给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+请必须使用时间复杂度为 O(log n) 的算法。
+
+**思路**：二分查找。
+
+```C++
+int searchInsert(vector<int>& nums, int target) {
+    int low=0,high =nums.size()-1;
+    if(target<=nums[low]) return 0;
+    else if(target>nums[high]) return nums.size();
+    
+    while(low<high){
+        int mid = (low+high)/2;
+        if(nums[mid] == target) return mid;
+        else if(target>nums[mid]) low = mid+1;
+        else high = mid-1;
+    }
+    if(nums[low]>target) return low;
+    else if(nums[low]<target) return low+1;
+    return low;
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
