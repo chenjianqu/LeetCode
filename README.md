@@ -284,6 +284,111 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
 ```
 
 
+## 哈希表
+### L705. 设计哈希集合
+**题目**：不使用任何内建的哈希表库设计一个哈希集合（HashSet）。  
+实现 MyHashSet 类：
+void add(key) 向哈希集合中插入值 key 。  
+bool contains(key) 返回哈希集合中是否存在这个值 key 。  
+void remove(key) 将给定值 key 从哈希集合中删除。如果哈希集合中没有这个值，什么也不做。  
+
+**思路1**：使用数组作为容器，一开始就设置数组的容量。使用除留余数法作为哈希函数。使用链地址法解决哈希冲突。即
+数组的每个元素是一个list，这样增删比较方便。
+
+```C++
+class MyHashSet {
+public:
+    MyHashSet() {
+        data.resize(kSize);
+    }
+    int hash(int key){
+        return key%kSize;
+    }
+    void add(int key) {
+        int index = hash(key);
+        for(auto it=data[index].begin();it!=data[index].end();++it)
+            if(*it == key)
+                return;
+        data[index].push_back(key);
+    }
+    void remove(int key) {
+        int index = hash(key);
+        for(auto it=data[index].begin();it!=data[index].end();++it){
+            if(*it == key){
+                data[index].erase(it);
+                return;
+            }
+        }
+    }
+    bool contains(int key) {
+        int index = hash(key);
+        for(auto p: data[index]) if(p==key) return true;
+        return false;
+    }
+private:
+    vector<list<int>> data;
+    static constexpr int kSize=1000;
+};
+```
+
+
+### L706. 设计哈希映射
+**题目**：不使用任何内建的哈希表库设计一个哈希映射（HashMap）。  
+实现 MyHashMap 类：  
+MyHashMap() 用空映射初始化对象  
+void put(int key, int value) 向 HashMap 插入一个键值对 (key, value) 。如果 key 已经存在于映射中，则更新其对应的值 value 。  
+int get(int key) 返回特定的 key 所映射的 value ；如果映射中不包含 key 的映射，返回 -1 。  
+void remove(key) 如果映射中存在 key 的映射，则移除 key 和它所对应的 value 。  
+
+**思路1**：使用数组作为容器，一开始就设置数组的容量。使用除留余数法作为哈希函数。使用链地址法解决哈希冲突。即
+数组的每个元素是一个list，这样增删比较方便。
+```C++
+class MyHashMap {
+public:
+    MyHashMap() {
+        data.resize(kSize);
+    }
+    int hash(int key){
+        return key%kSize;
+    }
+    void put(int key, int value) {
+        int index = hash(key);
+        for(auto it=data[index].begin();it!=data[index].end();++it){
+            if(it->first==key){
+                it->second = value;
+                return;
+            }
+        }
+        data[index].push_back({key,value});
+    }
+    
+    int get(int key) {
+        int index = hash(key);
+        for(auto it=data[index].begin();it!=data[index].end();++it){
+            if(it->first==key){
+                return it->second;
+            }
+        }
+        return -1;
+    }
+    
+    void remove(int key) {
+        int index = hash(key);
+        for(auto it=data[index].begin();it!=data[index].end();++it){
+            if(it->first==key){
+                data[index].erase(it);
+                return;
+            }
+        }
+    }
+private:
+    vector<list<pair<int,int>>> data;
+    static constexpr int kSize=1000;
+};
+```
+
+
+
 
 ## 链表
 ### L141. 环形链表
