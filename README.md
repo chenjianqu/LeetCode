@@ -6,6 +6,10 @@
 
 
 ## 数组
+
+
+
+
 ### L2022. 将一维数组转变成二维数组
 
 **题目**:
@@ -281,6 +285,76 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
     return arr;
 }
 
+```
+
+
+
+### L75. 颜色分类
+**题目**:
+给定一个包含红色、白色和蓝色，一共 n 个元素的数组，原地对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+此题中，我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。  
+**思路1：**: 最简单粗暴的方法是，直接使用排序算法，进行升序排列。
+```C++
+//快速排序
+void QSort(vector<int> &nums,int low,int high){
+    static auto partition = [](vector<int> &arr,int left,int right){
+        int key = arr[left];
+        while(left<right){
+            while(left < right && arr[right]>=key) right--;
+            arr[left]=arr[right];
+            while(left<right && arr[left]<=key) left++;
+            arr[right] = arr[left];
+        }
+        arr[left] = key;
+        return left;
+    };
+    if(low>=high) return;
+    int mid = partition(nums,low,high);
+    QSort(nums,low,mid-1);
+    QSort(nums,mid+1,high);
+}
+
+
+void sortColors(vector<int>& nums) {
+    QSort(nums,0,nums.size()-1);
+}
+```
+
+**思路2**：这是一个荷兰国旗问题。单指针，遍历两次，第一次遍历将0 交换到数组的前部，第二次遍历将1 交换到0后数组的中间区域。
+```C++
+void sortColors(vector<int>& nums) {
+    int k=0;
+    for(int i=0;i<nums.size();++i){
+        if( nums[i]==0){
+            std::swap(nums[i],nums[k]);
+            k++;
+        }
+    }
+    for(int i=k;i<nums.size();++i){
+        if( nums[i]==1){
+            std::swap(nums[i],nums[k]);
+            k++;
+        }
+    }
+}
+```
+
+**思路3**：采用双指针，一个从前往后，一个从后往前同时遍历。
+```C++
+void sortColors(vector<int>& nums) {
+    int k = nums.size()-1;
+    int j=0;
+    for(int i=0;i<=k;++i){
+        while(i<=k && nums[i]==2){
+            std::swap(nums[i],nums[k]);
+            k--;
+        }
+        if(nums[i]==0){
+            std::swap(nums[i],nums[j]);
+            j++;
+        }
+    }
+}
 ```
 
 
