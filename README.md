@@ -9,21 +9,21 @@
 
 [贪心](https://github.com/chenjianqu/LeetCode/blob/master/%E8%B4%AA%E5%BF%83.md)
 
-<<<<<<< HEAD
-## 数组
-
-
-
-
-### L2022. 将一维数组转变成二维数组
-=======
 [动态规划](https://github.com/chenjianqu/LeetCode/blob/master/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92.md)
->>>>>>> 104197c0729f4b1129b2f296ad78686234f80e96
+
+
+
+
+
 
 
 **哈希表**
 **链表**
 **查找**
+
+
+
+
 
 
 ## 哈希表
@@ -516,7 +516,6 @@ int searchInsert(vector<int>& nums, int target) {
     return low;
 }
 ```
-
 
 
 
