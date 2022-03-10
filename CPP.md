@@ -6,10 +6,59 @@
 
 
 
+## 输入输出
+
+### 输入数组
+
+如果给出以下数组：`23，12，34，56，33`，则：
+
+```C++
+vector<int> data;
+int tmp;
+while (cin >> tmp) {
+	data.push_back(tmp);
+	if (cin.get() == '\n') //读入一个字符，若为回车，则结束输入
+		break;
+}
+```
 
 
 
+如果给出矩阵：
 
+```
+12，23，34
+23，45，56
+34，45，76
+```
+
+则：
+
+```C++
+vector<vector<int>> arr;	
+vector<int> a;
+while (cin>>num) {
+    a.push_back(num);
+    if (cin.get() == '\n'){
+       arr.push_back(a);
+       a.clear();
+  }
+}
+```
+
+
+
+如果给出以下字符串数组：`dsfsd,sdsf,sdf,ftry,hyrdr`，则：
+
+```C++
+vector<string> data;
+string tmp;
+while (cin>>tmp) {
+	data.push_back(tmp);
+	if (cin.get() == '\n') 
+		break;
+}
+```
 
 
 
@@ -120,11 +169,44 @@ for(int i=0;i<10;++i){
 
 
 
+## 数据结构
+
+### 最大堆和最小堆
+
+**红黑树**：
+
+```C++
+//定义最大堆
+std::multiset<int, std::greater<int>> windows;//最大堆
+//添加元素
+windows.insert(nums[i]);
+//删除一个元素
+windows.erase(windows.find(nums[left]));
+//删除多个元素
+windows.erase(nums[left]);
+//获取最大值
+*windows.begin();
+```
 
 
 
+**优先队列**：
 
+```C++
+//定义大顶堆
+std::priority_queue<int,vector<int>,std::less<int>> less_media;
+//定义小顶堆
+std::priority_queue<int,vector<int>,std::greater<int>> greater_median;
 
+//插入数据
+less_media.push(num);
+
+//删除数据
+less_media.pop();
+
+//获得堆顶的值
+less_media.top();
+```
 
 
 
