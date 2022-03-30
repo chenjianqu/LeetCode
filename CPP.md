@@ -62,10 +62,12 @@ while (cin>>tmp) {
 
 
 
+## C++常用工具
 
 
 
-## 数据的表示范围
+
+### 数据的表示范围
 
 ```C++
 #include <limits>
@@ -135,7 +137,7 @@ cout << "\t最小值：" << (numeric_limits<size_t>::min)() << endl;
 
 
 
-## 随机数
+### 随机数
 
 随机数引擎类：生成随机unsigned整数序列；
 
@@ -207,6 +209,79 @@ less_media.pop();
 //获得堆顶的值
 less_media.top();
 ```
+
+
+
+
+
+## 字符串
+
+
+
+### 字符串和数字的转换
+
+### string ->int
+**1.手动转换**
+
+采用最原始的string, 然后按照十进制的特点进行算术运算得到int。
+
+```C++
+string s = "123";
+int num = 0;
+for (int i=0; i<s.size(); ++i) {
+    num = 10 * num + (s[i] - '0');
+}
+```
+
+**2.使用标准库中的 atoi 函数。**
+
+```C++
+string s = "123";
+int num = atoi(s.c_str());
+```
+
+对于其他类型也都有相应的标准库函数，比如浮点型atof(),long型atol()等等。
+
+**3.使用库函数stoi()**
+
+```C++
+string s = "1234";
+int t = stoi(s);
+```
+
+
+
+**3.采用 sstream 头文件中定义的字符串流对象来实现转换。**
+
+```C++
+istringstream is("123");     // 构造输入字符串流，流的内容初始化为 "123" 的字符串
+int num;
+is>>num;   // 从 is 流中读入一个 int 整数存入 num 中
+```
+
+
+
+### int -> string
+1.采用标准库中的 to_string 函数。
+
+```C++
+int num = 123;
+string num_str = to_string(num);
+```
+
+
+
+**2.采用 sstream 中定义的字符串流对象实现。**
+
+```C++
+ostringstream os;   // 构造一个输出字符串流，流内容为空
+int num = 123;
+os << num;   // 向输出字符串流中输出 num 的内容
+string num_str = os.str();   // 利用字符串流的 str 函数获取流中的内容
+```
+
+
+字符串流对象的 str 函数对于 istringstream 和 ostringstream 都适用，都可以获取流中的内容。
 
 
 
