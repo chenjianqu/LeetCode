@@ -180,6 +180,8 @@ for(int i=0;i<10;++i){
 ```C++
 //定义最大堆
 std::multiset<int, std::greater<int>> windows;//最大堆
+//最小堆
+std::multiset<int,std::less<int>> windows;
 //添加元素
 windows.insert(nums[i]);
 //删除一个元素
@@ -188,7 +190,35 @@ windows.erase(windows.find(nums[left]));
 windows.erase(nums[left]);
 //获取最大值
 *windows.begin();
+
 ```
+
+
+
+**自定义最小堆**：
+
+```C++
+//最小堆
+auto less_func=[](pair<int,int> a,pair<int,int> b){
+    return a.second < b.second;
+};
+std::multiset<pair<int,int>, decltype(less_func)> min_head(less_func);
+
+//保存 hash_map 中 p.second 最大的前k个元素
+for(auto &p : hash_map){
+    if(min_head.size() < k){
+        min_head.insert(p);
+    }
+    else{
+        if(p.second > min_head.begin()->second){
+            min_head.erase(min_head.begin());//删除之前的最小节点，放入新的节点
+            min_head.insert(p);
+        }
+    }
+}
+```
+
+
 
 
 
@@ -284,13 +314,6 @@ string num_str = os.str();   // 利用字符串流的 str 函数获取流中的�
 字符串流对象的 str 函数对于 istringstream 和 ostringstream 都适用，都可以获取流中的内容。
 
 
-
-### 整数 -> 二进制字符串
-
-```C++
-bitset<32> t(0xfaceabcd);
-string s=t.to_string();
-```
 
 
 
